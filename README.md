@@ -33,68 +33,68 @@ Itch.io requires an API key to access most of its API, most notably generating a
 
 2. Write the secret to the file path.
 
-  The fetcher gets the API key from reading the file located at `apiKeyPath`, which defaults to `"/run/secrets/fetchFromItch"`.
-  There's multiple ways to securely write your secret to this file.
+    The fetcher gets the API key from reading the file located at `apiKeyPath`, which defaults to `"/run/secrets/fetchFromItch"`.
+    There's multiple ways to securely write your secret to this file.
 
-  **Recommended: Using a [secret managing scheme](https://wiki.nixos.org/wiki/Comparison_of_secret_managing_schemes)**. The author uses 
-    [sops-nix](https://github.com/Mic92/sops-nix)** to put the API key safely in your NixOS configuration declaratively. Example:
-  ```nix
-  { config, inputs, ... }: {
+    **Recommended: Using a [secret managing scheme](https://wiki.nixos.org/wiki/Comparison_of_secret_managing_schemes)**. The author uses 
+      [sops-nix](https://github.com/Mic92/sops-nix)** to put the API key safely in your NixOS configuration declaratively. Example:
+    ```nix
+    { config, inputs, ... }: {
 
-    imports = [ inputs.sops-nix.nixosModules.sops ];
+      imports = [ inputs.sops-nix.nixosModules.sops ];
 
-    sops.secrets."fetchFromItch" = {
-      group = "nixbld";
-      mode = "0440";  # read-only
-    };
-  }
-  ```
+      sops.secrets."fetchFromItch" = {
+        group = "nixbld";
+        mode = "0440";  # read-only
+      };
+    }
+    ```
 
-  **Manually open $EDITOR**:
-  ```sh
-    sudo mkdir -p '/run/secrets' \
-      && (umask 337 && sudoedit -u root -g nixbld '/run/secrets/fetchFromItch')
-  ```
-  **Write from clipboard on x11**:
-  ```sh
-    sudo mkdir -p '/run/secrets' \
-      && nix-shell -p xclip --run wclip -se -c -o \ 
-      | (umask 337 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
-  ```
-  
-  **Write from clipboard on wayland**:
-  ```sh
-    sudo mkdir -p '/run/secrets' \
-      && nix-shell -p wl-clipboard --run wl-paste \
-      | (umask 377 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
-  ```
+    **Manually open $EDITOR**:
+    ```sh
+      sudo mkdir -p '/run/secrets' \
+        && (umask 337 && sudoedit -u root -g nixbld '/run/secrets/fetchFromItch')
+    ```
+    **Write from clipboard on x11**:
+    ```sh
+      sudo mkdir -p '/run/secrets' \
+        && nix-shell -p xclip --run wclip -se -c -o \ 
+        | (umask 337 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
+    ```
 
-  If you're new to managing secrets with Nix, the obvious question arises:
-  Why not just put `apiKey = "129rf2jhfu8rfi...";` as a function argument?** Why must we pass a path?
+    **Write from clipboard on wayland**:
+    ```sh
+      sudo mkdir -p '/run/secrets' \
+        && nix-shell -p wl-clipboard --run wl-paste \
+        | (umask 377 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
+    ```
 
-  The answer is security reasons. Obviously it would make sharing code on github very annoying, but when evaluating your NixOS
-   system, the build daemon also writes your secret in plain text to the
-   /nix/store which is world-readable, meaning any user on your system can read it. 
+    If you're new to managing secrets with Nix, the obvious question arises:
+    Why not just put `apiKey = "129rf2jhfu8rfi...";` as a function argument?** Why must we pass a path?
 
-   This is also why we're specifically passing a string path and not a path literal, i.e.
-   ```nix
-     apiKeyPath = /run/...;
-   ```
-   because path literals are copied to the store and as such the same problem arises as with a raw string secret.
+    The answer is security reasons. Obviously it would make sharing code on github very annoying, but when evaluating your NixOS
+     system, the build daemon also writes your secret in plain text to the
+     /nix/store which is world-readable, meaning any user on your system can read it. 
+
+     This is also why we're specifically passing a string path and not a path literal, i.e.
+     ```nix
+       apiKeyPath = /run/...;
+     ```
+     because path literals are copied to the store and as such the same problem arises as with a raw string secret.
 
 3. Pass the sandbox path to the builder
-  **NixOS**
-  ```nix
-  { config, ... }: {
-    nix.settings.sandbox-paths = [ "/run/secrets/fetchFromItch" ];
-    # elegant DRY if you use sops-nix or something similar
-    # nix.settings.sandbox-paths = [ config.sops.secrets."fetchFromItch".path ];
-  }
-  ```
-  **Ad-hoc on each build:**
-  ```sh
-  nix build ... --extra-sandbox-paths '/run/secrets/fetchFromItch'
-  ```
+    **NixOS**
+    ```nix
+    { config, ... }: {
+      nix.settings.sandbox-paths = [ "/run/secrets/fetchFromItch" ];
+      # elegant DRY if you use sops-nix or something similar
+      # nix.settings.sandbox-paths = [ config.sops.secrets."fetchFromItch".path ];
+    }
+    ```
+    **Ad-hoc on each build:**
+    ```sh
+    nix build ... --extra-sandbox-paths '/run/secrets/fetchFromItch'
+    ```
 
 ## How does it work
 
