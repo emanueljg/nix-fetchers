@@ -1,5 +1,5 @@
 {
-  description = "fetchFromItch is a Nix FOD fetcher for free itch.io games.";
+  description = "fetch-from-itch is a Nix FOD fetcher for free itch.io games.";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs, ... }@inputs:
