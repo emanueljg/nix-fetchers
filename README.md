@@ -52,21 +52,21 @@ Itch.io requires an API key to access most of its API, most notably generating a
 
     *Manually open $EDITOR*:
     ```sh
-      sudo mkdir -p '/run/secrets' \
-        && (umask 337 && sudoedit -u root -g nixbld '/run/secrets/fetchFromItch')
+    sudo mkdir -p '/run/secrets' \
+      && (umask 337 && sudoedit -u root -g nixbld '/run/secrets/fetchFromItch')
     ```
     *Write from clipboard on x11*:
     ```sh
-      sudo mkdir -p '/run/secrets' \
-        && nix-shell -p xclip --run wclip -se -c -o \ 
-        | (umask 337 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
+    sudo mkdir -p '/run/secrets' \
+      && nix-shell -p xclip --run wclip -se -c -o \ 
+      | (umask 337 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
     ```
 
     *Write from clipboard on wayland*:
     ```sh
-      sudo mkdir -p '/run/secrets' \
-        && nix-shell -p wl-clipboard --run wl-paste \
-        | (umask 337 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
+    sudo mkdir -p '/run/secrets' \
+      && nix-shell -p wl-clipboard --run wl-paste \
+      | (umask 337 && sudo -u root -g nixbld tee '/run/secrets/fetchFromItch')
     ```
 
     If you're new to managing secrets with Nix, the obvious question arises:
