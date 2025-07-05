@@ -17,8 +17,5 @@
       lib = forAllSystems (pkgs: {
         fetchFromItch = pkgs.callPackage ./. { };
       });
-      packages = forAllSystems (pkgs: {
-        test = pkgs.callPackage ./test.nix { inherit (self.lib.${pkgs.system}) fetchFromItch; };
-      });
     };
 }

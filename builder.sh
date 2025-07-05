@@ -33,9 +33,7 @@ download_url=$(
 )
 
 echo 'Downloading game...'
-"${curl[@]}" "$download_url" -o "$name"
+"${curl[@]}" "$download_url" -o "$out"
 
 set +o noglob
-
-mv "$name" $out
 
