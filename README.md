@@ -102,7 +102,7 @@ Itch.io requires an API key to access most of its API, most notably generating a
 
 ## How is the itch.io api used
 
-We roughly follow the steps outlined here: https://itch.io/t/1588368/download-a-game-with-the-api:
+We roughly follow the steps outlined here: https://itch.io/t/1588368/download-a-game-with-the-api
 
 ```
 Given the creator (thorbjorn) and game (tiled), get the game’s numeric id:
