@@ -36,8 +36,8 @@ Itch.io requires an API key to access most of its API, most notably generating a
     The fetcher gets the API key from reading the file located at `apiKeyPath`, which defaults to `"/run/secrets/fetchFromItch"`.
     There's multiple ways to securely write your secret to this file.
 
-    *Recommended: Using a [secret managing scheme](https://wiki.nixos.org/wiki/Comparison_of_secret_managing_schemes)*. The author uses 
-      [sops-nix](https://github.com/Mic92/sops-nix)* to put the API key safely in your NixOS configuration declaratively. Example:
+    *Recommended: Using a [secret managing scheme](https://wiki.nixos.org/wiki/Comparison_of_secret_managing_schemes)*. to put the API key safely in the NixOS configuration declaratively.  The author uses 
+      [sops-nix](https://github.com/Mic92/sops-nix)  Example:
     ```nix
     { config, inputs, ... }: {
 
@@ -72,18 +72,22 @@ Itch.io requires an API key to access most of its API, most notably generating a
     If you're new to managing secrets with Nix, the obvious question arises:
     Why not just put `apiKey = "129rf2jhfu8rfi...";` as a function argument?* Why must we pass a path?
 
-    The answer is security reasons. Obviously it would make sharing code on github very annoying, but when evaluating your NixOS
-     system, the build daemon also writes your secret in plain text to the
+    The answer is security reasons. Not only would it make sharing code on github very annoying, but when evaluating your NixOS
+     system, Nix writes your secret in plain text to the
      /nix/store which is world-readable, meaning any user on your system can read it. 
 
      This is also why we're specifically passing a string path and not a path literal, i.e.
      ```nix
+       # path literal
        apiKeyPath = /run/...;
+       # string path, note the quotes
+       apiKeyPath = "/run/..."; q
      ```
      because path literals are copied to the store and as such the same problem arises as with a raw string secret.
 
 3. Pass the sandbox path to the builder
-    *NixOS*
+
+   *NixOS*
     ```nix
     { config, ... }: {
       nix.settings.sandbox-paths = [ "/run/secrets/fetchFromItch" ];
@@ -96,9 +100,9 @@ Itch.io requires an API key to access most of its API, most notably generating a
     nix build ... --extra-sandbox-paths '/run/secrets/fetchFromItch'
     ```
 
-## How does it work
+## How is the itch.io api used
 
-From https://itch.io/t/1588368/download-a-game-with-the-api:
+We roughly follow the steps outlined here: https://itch.io/t/1588368/download-a-game-with-the-api:
 
 ```
 Given the creator (thorbjorn) and game (tiled), get the game’s numeric id:
