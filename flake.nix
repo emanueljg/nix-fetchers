@@ -1,21 +1,15 @@
 {
-  description = "fetch-from-itch is a Nix FOD fetcher for free itch.io games.";
+  description = "A collection of custom Nix fetchers";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      systems = [
-        "x86_64-linux"
-      ];
-
-      forAllSystems = f:
-        inputs.nixpkgs.lib.genAttrs
-          systems
-          (system: f nixpkgs.legacyPackages.${system});
+      inherit (nixpkgs) lib;
+      systemPkgs = lib.getAttrs [ "x86_64-linux" ] nixpkgs.legacyPackages;
     in
     {
-      lib = forAllSystems (pkgs: {
-        fetchFromItch = pkgs.callPackage ./. { };
+      lib = builtins.mapAttrs (_: pkgs: {
+        fetchFromItch = pkgs.callPackage ./fetchFromItch { };
       });
     };
 }
