@@ -3,11 +3,9 @@
 , cacert
 , fetchurl
 , curl
-, jq
+, pup
 }: let
   baseUrl = "https://buzzheavier.com/";
-  itemToURL = item: baseUrl + item;
-  urlToItem = url: lib.removePrefix baseUrl url; 
 { item ? lib.removePrefix baseUrl url;
 , url ? baseUrl + item;
 , useSHA1Hash ? false
