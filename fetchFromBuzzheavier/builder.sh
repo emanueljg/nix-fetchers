@@ -9,6 +9,11 @@ curlVersion=$(curl -V | head -1 | cut -d' ' -f2)
 curl=(
     curl
     --location
+    --max-redirs 20
+    --retry 3
+    --retry-all-errors
+    --continue-at -
+    --disable-epsv
     --user-agent "curl/$curlVersion Nixpkgs/$nixpkgsVersion"
 )
 
