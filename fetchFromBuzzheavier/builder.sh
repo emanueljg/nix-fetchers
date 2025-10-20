@@ -10,9 +10,10 @@ read -r -d "\n" buzzheavier_name buzzheavier_sha1 <$(curl 'https://buzzheavier.c
   | pup 'div[x-data="App()"] span:first-child, div[x-data="App()"] li:nth-child(4) code text{}'
 )
 
-for metavar in {buzzheavier_name,buzzheavier_sha1}; do 
-    echo "${!metavar@A}"
-done
+set -x
+echo $buzzheavier_name
+echo $buzzheavier_sha1
+set +x
 
 echo -n "useSHA1Hash is "$useSHA1Hash: " 
 if [[ "$useSHA1Hash" == "true" ]]; then
@@ -24,6 +25,6 @@ if [[ "$useSHA1Hash" == "true" ]]; then
 else
   echo "using nix's hash..."
 
-echo "${!hash@A}"
-
-set +o noglob
+set -x
+echo "$hash"
+set +x
