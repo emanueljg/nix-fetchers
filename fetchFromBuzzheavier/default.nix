@@ -19,7 +19,8 @@ stdenvNoCC.mkDerivation (
     inherit item url useSHA1Hash hash name;
     builder = ./builder.sh;
     buildInputs = [ curl pup ];
-    # SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+    SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+    nixpkgsVersion = lib.trivial.release;
 
     outputHashMode = "recursive";
   }
