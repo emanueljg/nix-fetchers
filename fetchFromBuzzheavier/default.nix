@@ -7,8 +7,8 @@
 }: let
   baseUrl = "https://buzzheavier.com/";
 in 
-{ item ? lib.removePrefix baseUrl url;
-, url ? baseUrl + item;
+{ item ? lib.removePrefix baseUrl url
+, url ? baseUrl + item
 , useSHA1Hash ? false
 , hash ? lib.fakeHash
 , name ? "buzzheavier-${item}"
