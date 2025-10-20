@@ -10,6 +10,7 @@
     {
       lib = builtins.mapAttrs (_: pkgs: {
         fetchFromItch = pkgs.callPackage ./fetchFromItch { };
+        fetchFromBuzzHeavier = pkgs.callPackage ./fetchFromBuzzHeavier { };
       });
     };
 }
