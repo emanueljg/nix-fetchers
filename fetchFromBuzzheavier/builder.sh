@@ -19,7 +19,7 @@ curl=(
 
 echo "Downloading BH item $item ($url)"
 echo "Fetching HTML and parsing metadata..."
-"${curl[@]}" "$url"
+"${curl[@]}" -v "$url"
 read -r -d "\n" buzzheavier_name buzzheavier_sha1 <$("${curl[@]}" -v "$url" \
   | pup 'div[x-data="App()"] span:first-child, div[x-data="App()"] li:nth-child(4) code text{}'
 )
