@@ -6,7 +6,7 @@ source "${stdenv:?}/setup"
 
 echo "Downloading BH item $item ($url)"
 echo "Fetching HTML and parsing metadata...
-read -r -d "\n" buzzheavier_name buzzheavier_sha1 <$(curl 'https://buzzheavier.com/frtjt00auxv5' \
+read -r -d "\n" buzzheavier_name buzzheavier_sha1 <$(curl -v "$url" \
   | pup 'div[x-data="App()"] span:first-child, div[x-data="App()"] li:nth-child(4) code text{}'
 )
 
