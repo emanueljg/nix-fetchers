@@ -4,10 +4,17 @@
 if [ -e .attrs.sh ]; then source .attrs.sh; fi
 source "${stdenv:?}/setup"
 
+curlVersion=$(curl -V | head -1 | cut -d' ' -f2)
+
+curl=(
+    curl
+    --location
+    --user-agent "curl/$curlVersion Nixpkgs/$nixpkgsVersion"
+)
+
 echo "Downloading BH item $item ($url)"
 echo "Fetching HTML and parsing metadata..."
-curl --verbose "$url"
-read -r -d "\n" buzzheavier_name buzzheavier_sha1 <$(curl -v "$url" \
+read -r -d "\n" buzzheavier_name buzzheavier_sha1 <$("${curl[@]}" -v "$url" \
   | pup 'div[x-data="App()"] span:first-child, div[x-data="App()"] li:nth-child(4) code text{}'
 )
 
