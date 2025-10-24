@@ -19,7 +19,7 @@ stdenvNoCC.mkDerivation (
     builder = ./builder.sh;
     buildInputs = [ curl ];
     SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
-    hash = outputHash;
+    outputHash = hash;
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
   }
