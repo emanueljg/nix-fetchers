@@ -10,20 +10,9 @@ download_url="$(
     --head
     --silent \
     --output /dev/null \
-    --header 'Referer: https://buzzheavier.com/frtjt00auv5' \
+    --header "Referer: $url" \
     --write-out '%header{hx-redirect}'
 )"
 
 echo "Buzzheavier successfully responded with download link '$download_url'. Downloading..."
-curl "$u
-
-
-if [[ "$requestInfo" == "true" ]]; then
-    read -r -d "\n" buzzheavier_name buzzheavier_sha1 <<<$(curl -s "$url" \
-      | pup '.text-2xl, code text{}'
-    )
-    set -x
-    echo $buzzheavier_name
-    echo $buzzheavier_sha1
-    set +x
-fi
+curl "$url" --output $out
