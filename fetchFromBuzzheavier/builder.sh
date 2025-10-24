@@ -10,7 +10,7 @@ download_url="$(
     --head \
     --output /dev/null \
     --header "Referer: $url" \
-    --write-out '%header{hx-redirect}'
+    --write-out '%json'
 )"
 
 if [ -z "$download_url" ]; then
