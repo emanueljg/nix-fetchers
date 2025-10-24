@@ -1,0 +1,33 @@
+{ lib, stdenv, shellcheck-minimal, cacert }: lib.extendMkDerivation {
+  constructDrv = stdenv.mkDerivation;
+  excludeDrvArgNames = [
+    "addSSLCerts"
+    "shellcheckOpts" 
+  ];
+  extendDrvArgs = finalAttrs: prevAttrs@{ 
+    hash ? lib.fakeHash
+    , outputHashAlgo ? "sha256"
+    , outputHashMode ? "recursive"
+
+    , shellcheckOpts ? { }
+    , checkPhase ? null
+
+    , addSSLCerts ? false
+  }: {
+    outputHash = hash;
+    inherit outputHashAlgo outputHashMode;
+
+    checkPhase = if checkPhase != null then checkPhase else ''
+      runHook preCheck
+      ${stdenv.shellDryRun} "$target"
+      ${lib.optionalString pkgs.shellcheck-minimal.compiler.bootstrapAvailable ''
+        ${lib.getExe shellcheck-minimal} "$target" \
+          ${cli.toGNUCommandLineShell { } shellcheckOpts}
+      }
+      runHook postCheck
+    '';
+        
+  } // lib.optionalAttrs addSSLCerts { 
+    SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+  };
+}
