@@ -9,19 +9,17 @@
 in 
 { item ? lib.removePrefix baseUrl url
 , url ? baseUrl + item
-, useSHA1Hash ? false
 , hash ? lib.fakeHash
 , name ? "buzzheavier-${item}"
 , ...
 }@args:
 stdenvNoCC.mkDerivation (
   {
-    inherit item url useSHA1Hash hash name;
+    inherit item url hash name;
     builder = ./builder.sh;
-    buildInputs = [ curl pup ];
+    buildInputs = [ curl ];
     SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
-    nixpkgsVersion = lib.trivial.release;
-
+    outputHashAlgo = "sha256";
     outputHashMode = "recursive";
   }
 )
