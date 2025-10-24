@@ -8,7 +8,6 @@ echo "Asking Buzzheavier for download link to $item ($url)..."
 download_url="$(
     curl "$url" \
     --head \
-    --silent \
     --output /dev/null \
     --header "Referer: $url" \
     --write-out '%header{hx-redirect}'
