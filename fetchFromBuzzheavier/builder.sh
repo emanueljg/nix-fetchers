@@ -14,5 +14,5 @@ download_url="$(
     --write-out '%header{hx-redirect}'
 )"
 
-echo "Buzzheavier successfully responded with download link '$download_url'. Downloading..."
-curl "$url" --output $out
+echo "Buzzheavier successfully responded with download link $download_url. Downloading..."
+curl "$download_url" --output $out
