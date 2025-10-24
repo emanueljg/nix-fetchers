@@ -1,26 +1,20 @@
 { lib
-, stdenvNoCC
-, cacert
-, fetchurl
 , curl
 , jq
-}: let
-  baseUrl = "https://buzzheavier.com/";
-in 
-{ item ? lib.removePrefix baseUrl url
-, url ? baseUrl + item
-, hash ? lib.fakeHash
-, name ? "buzzheavier-${item}"
-, ...
-}@args:
-stdenvNoCC.mkDerivation (
-  {
-    inherit item url name;
+, mkCheckedFOD
+}: lib.mkExtendDerivation {
+  constructDrv = mkCheckedFOD;
+  extendDrvArgs = finalAttrs: prevAttrs@{
+    baseUrl ? "https://buzzheavier.com/"
+    , url ? null
+    , item ? null
+  }: if !(lib.xor (url == null) (item == null)) then 
+    builtins.throw ''
+      Exactly one of 'url' and 'item' must be set
+    '' 
+  else {
+    url = if url != null then url else baseUrl + item;
+    item = if item == null then lib.removePrefix url item;
     builder = ./builder.sh;
-    buildInputs = [ curl jq ];
-    SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
-    outputHash = hash;
-    outputHashAlgo = "sha256";
-    outputHashMode = "recursive";
-  }
-)
+  };
+}
