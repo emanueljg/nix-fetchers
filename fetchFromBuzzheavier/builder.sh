@@ -5,6 +5,11 @@ if [ -e .attrs.sh ]; then source .attrs.sh; fi
 source "${stdenv:?}/setup"
 
 echo "Asking Buzzheavier for download link to $item ($url)..."
+curl "$url/download" \
+    --head \
+    --output /dev/null \
+    --header "Referer: $url" \
+    --write-out '%json'
 download_url="$(
     curl "$url/download" \
     --head \
