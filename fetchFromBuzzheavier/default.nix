@@ -3,7 +3,7 @@
 , cacert
 , fetchurl
 , curl
-, pup
+, jq
 }: let
   baseUrl = "https://buzzheavier.com/";
 in 
