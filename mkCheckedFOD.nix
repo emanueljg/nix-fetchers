@@ -23,7 +23,7 @@
       ${lib.optionalString pkgs.shellcheck-minimal.compiler.bootstrapAvailable ''
         ${lib.getExe shellcheck-minimal} "$target" \
           ${cli.toGNUCommandLineShell { } shellcheckOpts}
-      }
+      ''}
       runHook postCheck
     '';
         
