@@ -14,7 +14,7 @@
     '' 
   else {
     url = if url != null then url else baseUrl + item;
-    item = if item == null then lib.removePrefix url item;
+    item = if item != null then item else lib.removePrefix url item;
     builder = ./builder.sh;
   };
 }
