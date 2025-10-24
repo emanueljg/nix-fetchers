@@ -7,7 +7,7 @@ source "${stdenv:?}/setup"
 echo "Asking Buzzheavier for download link to $item ($url)..."
 download_url="$(
     curl "$url" \
-    --head
+    --head \
     --silent \
     --output /dev/null \
     --header "Referer: $url" \
