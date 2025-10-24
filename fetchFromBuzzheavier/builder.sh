@@ -5,20 +5,23 @@ if [ -e .attrs.sh ]; then source .attrs.sh; fi
 source "${stdenv:?}/setup"
 
 echo "Asking Buzzheavier for download link to $item ($url)..."
-curl "$url/download" \
-    --head \
-    --output /dev/null \
-    --header "Referer: $url" \
-    --write-out '%json'
-download_url="$(
+
+dl_request="$(
     curl "$url/download" \
     --head \
     --output /dev/null \
     --header "Referer: $url" \
-    --write-out '%{json}'
-)"
+    --write-out '{"resp": %{json}, "headers": %{header_json}}'
+)" 
 
-if [ -z "$download_url" ]; then
+http_code="$(echo "$dl_request" | jq -r '.http_code')"
+if [ "$http_code" -ge 400 ]; then
+    echo "ERROR: Request failed! HTTP Error '$http_code'"
+    exit 1
+fi
+
+download_url="$(echo "$dl_request" | jq -r '.headers."hx-redirect"[0]')"
+if [[ "$download_url" = 'null' ]]; then
     echo "ERROR: Buzzheavier gave us no $download_url on our request."
     exit 1
 fi
