@@ -17,7 +17,7 @@ stdenvNoCC.mkDerivation (
   {
     inherit item url name;
     builder = ./builder.sh;
-    buildInputs = [ curl ];
+    buildInputs = [ curl jq ];
     SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
     outputHash = hash;
     outputHashAlgo = "sha256";
