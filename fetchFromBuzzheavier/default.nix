@@ -15,10 +15,11 @@ in
 }@args:
 stdenvNoCC.mkDerivation (
   {
-    inherit item url hash name;
+    inherit item url name;
     builder = ./builder.sh;
     buildInputs = [ curl ];
     SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+    hash = outputHash;
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
   }
