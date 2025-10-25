@@ -15,7 +15,7 @@
     , addSSLCerts ? false
   }: {
     outputHash = finalAttrs.hash;
-    inherit outputHashAlgo outputHashMode;
+    inherit hash outputHashAlgo outputHashMode;
 
     checkPhase = if checkPhase != null then checkPhase else ''
       runHook preCheck
