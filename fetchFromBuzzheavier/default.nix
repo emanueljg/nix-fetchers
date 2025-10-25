@@ -8,7 +8,7 @@
     baseUrl ? "https://buzzheavier.com/"
     , item
   }: {
-    inherit baseUrl;
+    inherit baseUrl item;
     url = finalAttrs.baseUrl + finalAttrs.item;
     builder = ./builder.sh;
   };
