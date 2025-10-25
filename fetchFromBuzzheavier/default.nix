@@ -6,15 +6,10 @@
   constructDrv = mkCheckedFOD;
   extendDrvArgs = finalAttrs: prevAttrs@{
     baseUrl ? "https://buzzheavier.com/"
-    , url ? null
-    , item ? null
-  }: if !(lib.xor (url == null) (item == null)) then 
-    builtins.throw ''
-      Exactly one of 'url' and 'item' must be set
-    '' 
-  else {
-    url = if url != null then url else baseUrl + item;
-    item = if item != null then item else lib.removePrefix url item;
+    , item
+  }: {
+    inherit baseUrl;
+    url = finalAttrs.baseUrl + finalAttrs.item;
     builder = ./builder.sh;
   };
 }
