@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
 
 # TODO look up what this does
 if [ -e .attrs.sh ]; then source .attrs.sh; fi
@@ -6,23 +8,17 @@ source "${stdenv:?}/setup"
 
 echo "Asking Buzzheavier for download link to $item ($url)..."
 
-dl_request="$(
-    curl "$url/download" \
+download_url="$(
+  curl "$url/download" \
     --head \
     --output /dev/null \
     --header "Referer: $url" \
-    --write-out '{"resp": %{json}, "headers": %{header_json}}'
+    --write-out '%header{hx-redirect}' \
+  | jq --raw '.headers."hx-redirect"[0]'
 )" 
 
-http_code="$(echo "$dl_request" | jq -r '.http_code')"
-if [ "$http_code" -ge 400 ]; then
-    echo "ERROR: Request failed! HTTP Error '$http_code'"
-    exit 1
-fi
-
-download_url="$(echo "$dl_request" | jq -r '.headers."hx-redirect"[0]')"
 if [[ "$download_url" = 'null' ]]; then
-    echo "ERROR: Buzzheavier gave us no $download_url on our request."
+    echo "ERROR: No download_url recieved."
     exit 1
 fi
 
