@@ -1,5 +1,5 @@
 { lib, stdenv, shellcheck-minimal, cacert }: lib.extendMkDerivation {
-  constructDrv = stdenv.mkDerivation;
+  constructDrv = stdenvNoCC.mkDerivation;
   excludeDrvArgNames = [
     "addSSLCerts"
     "shellcheckOpts" 
