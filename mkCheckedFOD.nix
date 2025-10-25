@@ -14,7 +14,7 @@
 
     , addSSLCerts ? false
   }: {
-    outputHash = hash;
+    outputHash = finalAttrs.hash;
     inherit outputHashAlgo outputHashMode;
 
     checkPhase = if checkPhase != null then checkPhase else ''
