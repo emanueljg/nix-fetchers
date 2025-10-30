@@ -19,7 +19,7 @@
 
     checkPhase = if checkPhase != null then checkPhase else ''
       runHook preCheck
-      ${stdenv.shellDryRun} "$target"
+      ${stdenvNoCC.shellDryRun} "$target"
       ${lib.optionalString pkgs.shellcheck-minimal.compiler.bootstrapAvailable ''
         ${lib.getExe shellcheck-minimal} "$target" \
           ${cli.toGNUCommandLineShell { } shellcheckOpts}
