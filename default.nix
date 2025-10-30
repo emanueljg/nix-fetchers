@@ -12,6 +12,7 @@ let
   pkgSet = {
     mkFOD = callPackageSet ./mkFOD.nix { };
     fetchFromBuzzheavier = callPackageSet ./fetchFromBuzzheavier { };
+    fetchFromMega = callPackageSet ./fetchFromMega { };
   };
 in
 pkgSet
