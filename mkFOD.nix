@@ -13,9 +13,6 @@
       outputHashAlgo ? "sha256",
       outputHashMode ? "recursive",
 
-      shellcheckOpts ? { },
-      checkPhase ? null,
-
       SSL_CERT_FILE ? null,
       addSSLCerts ? true,
 
@@ -25,26 +22,18 @@
       ...
     }:
     {
+      inherit
+        hash
+        outputHashAlgo
+        outputHashMode
+        addSSLCerts
+        enableParallelBuilding
+        strictDeps
+        ;
+
       outputHash = finalAttrs.hash;
-      inherit hash outputHashAlgo outputHashMode;
-      inherit shellcheckOpts addSSLCerts;
-      inherit enableParallelBuilding strictDeps;
 
       __structuredAttrs = true;
-
-      checkPhase =
-        if checkPhase != null then
-          checkPhase
-        else
-          ''
-            runHook preCheck
-            ${stdenv.shellDryRun} "$target"
-            ${lib.optionalString shellcheck-minimal.compiler.bootstrapAvailable ''
-              ${lib.getExe shellcheck-minimal} "$target" \
-                ${lib.cli.toGNUCommandLineShell { } shellcheckOpts}
-            ''}
-            runHook postCheck
-          '';
 
       SSL_CERT_FILE =
         if SSL_CERT_FILE != null then

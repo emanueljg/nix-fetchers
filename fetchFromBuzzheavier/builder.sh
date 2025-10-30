@@ -1,26 +1,24 @@
 #!/bin/bash
 set -euo pipefail
 
-# TODO look up what this does
-if [ -e .attrs.sh ]; then source .attrs.sh; fi
-source "${stdenv:?}/setup"
+echo "Asking Buzzheavier for download link to '$item' ($url)..."
 
-echo "Asking Buzzheavier for download link to $item ($url)..."
-
-IFS=$'\v' read -r location download_url <<< $(
+# we are directly concatenating the headers Location: and hx-redirect:
+# in the format string. They are mutually exclusive; if one is non-empty,
+# the other will be empty, so the resulting output string will always either
+# be a '/notfound' (BH 404) or a download URL.
+answer="$(
   curl "$url/download" \
     --head \
     --output /dev/null \
     --header "Referer: $url" \
-    --write-out '%header{location} %header{hx-redirect}' 
-) 
+    --write-out '%header{location}%header{hx-redirect}' 
+)"
 
-echo "$location" "$download_url"
-
-if [[ -z "$download_url" ]]; then
-    echo "ERROR: No download_url recieved."
-    exit 1
+if [ "$answer" = '/notfound' ]; then
+  echo " Buzzheavier couldn't find the item (redirect to $baseUrl/notfound)"
+  exit 1
 fi
 
-echo "Buzzheavier successfully responded with download link $download_url. Downloading..."
-curl "$download_url" --output $out
+echo "Buzzheavier successfully responded with download link $answer. Downloading..."
+curl "$answer" --output "$out"

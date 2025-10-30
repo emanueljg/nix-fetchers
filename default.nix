@@ -1,14 +1,17 @@
-let sources = import ./sources.nix;
-in {
+let
+  sources = import ./sources.nix;
+in
+{
   system ? builtins.currentSystem,
-  nixpkgs ? sources.nixpkgs 
-}: let
+  nixpkgs ? sources.nixpkgs,
+}:
+let
   pkgs = import nixpkgs { inherit system; };
   inherit (pkgs) lib;
   callPackageSet = lib.callPackageWith (pkgs // pkgSet);
   pkgSet = {
-    mkCheckedFOD = callPackageSet ./mkCheckedFOD.nix { };
+    mkFOD = callPackageSet ./mkFOD.nix { };
     fetchFromBuzzheavier = callPackageSet ./fetchFromBuzzheavier { };
   };
-in pkgSet
-  
+in
+pkgSet

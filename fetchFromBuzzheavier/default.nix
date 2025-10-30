@@ -1,11 +1,10 @@
 {
   lib,
   curl,
-  jq,
-  mkCheckedFOD,
+  mkFOD,
 }:
 lib.extendMkDerivation {
-  constructDrv = mkCheckedFOD;
+  constructDrv = mkFOD;
   extendDrvArgs =
     finalAttrs:
     prevAttrs@{
@@ -20,7 +19,6 @@ lib.extendMkDerivation {
       url = "${finalAttrs.baseUrl}/${finalAttrs.item}";
       nativeBuildInputs = [
         curl
-        jq
       ]
       ++ nativeBuildInputs;
       builder = ./builder.sh;
