@@ -1,6 +1,5 @@
 #!/bin/bash
 set -euo pipefail
-IFS=$'\n\t'
 
 # TODO look up what this does
 if [ -e .attrs.sh ]; then source .attrs.sh; fi
@@ -8,16 +7,17 @@ source "${stdenv:?}/setup"
 
 echo "Asking Buzzheavier for download link to $item ($url)..."
 
-download_url="$(
+IFS=$'\v' read -r location download_url <<< $(
   curl "$url/download" \
     --head \
     --output /dev/null \
     --header "Referer: $url" \
-    --write-out '%header{hx-redirect}' \
-  | jq --raw '.headers."hx-redirect"[0]'
-)" 
+    --write-out '%header{location} %header{hx-redirect}' 
+) 
 
-if [[ "$download_url" = 'null' ]]; then
+echo "$location" "$download_url"
+
+if [[ -z "$download_url" ]]; then
     echo "ERROR: No download_url recieved."
     exit 1
 fi
