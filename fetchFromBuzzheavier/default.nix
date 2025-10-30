@@ -2,7 +2,7 @@
 , curl
 , jq
 , mkCheckedFOD
-}: lib.mkExtendDerivation {
+}: lib.extendMkDerivation {
   constructDrv = mkCheckedFOD;
   extendDrvArgs = finalAttrs: prevAttrs@{
     baseUrl ? "https://buzzheavier.com/"
