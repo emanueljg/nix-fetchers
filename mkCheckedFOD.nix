@@ -1,4 +1,4 @@
-{ lib, stdenv, shellcheck-minimal, cacert }: lib.extendMkDerivation {
+{ lib, stdenvNoCC, shellcheck-minimal, cacert }: lib.extendMkDerivation {
   constructDrv = stdenvNoCC.mkDerivation;
   excludeDrvArgNames = [
     "addSSLCerts"
