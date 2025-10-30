@@ -4,6 +4,7 @@ in {
   nixpkgs ? sources.nixpkgs 
 }: let
   pkgs = import nixpkgs { inherit system; };
+  inherit (pkgs) lib;
   callPackageSet = lib.callPackageWith (pkgs // pkgSet);
   pkgSet = {
     mkCheckedFOD = callPackageSet ./mkCheckedFOD.nix { };
