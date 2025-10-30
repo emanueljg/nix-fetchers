@@ -22,7 +22,7 @@
       ${stdenvNoCC.shellDryRun} "$target"
       ${lib.optionalString shellcheck-minimal.compiler.bootstrapAvailable ''
         ${lib.getExe shellcheck-minimal} "$target" \
-          ${cli.toGNUCommandLineShell { } shellcheckOpts}
+          ${lib.cli.toGNUCommandLineShell { } shellcheckOpts}
       ''}
       runHook postCheck
     '';
