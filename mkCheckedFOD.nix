@@ -1,5 +1,5 @@
-{ lib, stdenvNoCC, shellcheck-minimal, cacert }: lib.extendMkDerivation {
-  constructDrv = stdenvNoCC.mkDerivation;
+{ lib, stdenv, shellcheck-minimal, cacert }: lib.extendMkDerivation {
+  constructDrv = stdenv.mkDerivation;
   excludeDrvArgNames = [
     "addSSLCerts"
     "shellcheckOpts" 
@@ -21,7 +21,7 @@
 
     checkPhase = if checkPhase != null then checkPhase else ''
       runHook preCheck
-      ${stdenvNoCC.shellDryRun} "$target"
+      ${stdenv.shellDryRun} "$target"
       ${lib.optionalString shellcheck-minimal.compiler.bootstrapAvailable ''
         ${lib.getExe shellcheck-minimal} "$target" \
           ${lib.cli.toGNUCommandLineShell { } shellcheckOpts}
