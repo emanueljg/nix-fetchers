@@ -9,6 +9,7 @@
     , item
   }: {
     inherit baseUrl item;
+    name = "buzzheavier-${finalAttrs.item}";
     url = finalAttrs.baseUrl + finalAttrs.item;
     builder = ./builder.sh;
   };
