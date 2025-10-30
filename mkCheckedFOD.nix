@@ -13,6 +13,8 @@
     , checkPhase ? null
 
     , addSSLCerts ? false
+
+    , ...
   }: {
     outputHash = finalAttrs.hash;
     inherit hash outputHashAlgo outputHashMode;
