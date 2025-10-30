@@ -1,5 +1,5 @@
 {
-  nixpkgs ? builtins.fetchTree {
+  nixpkgs = builtins.fetchTree {
     type = "github";
     owner = "nixos";
     repo = "nixpkgs";
