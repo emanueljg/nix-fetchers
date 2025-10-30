@@ -22,12 +22,6 @@
       enableParallelBuilding ? true,
       strictDeps ? true,
 
-      example ? ''
-        foo
-        bar
-        baz
-      '',
-
       ...
     }:
     {
