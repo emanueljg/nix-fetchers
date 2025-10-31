@@ -1,6 +1,6 @@
 # nix-fetchers
 
-`nix-fetchers` is a bunch of Nix fetchers for unconventional derivation sources.
+Nix fetchers for unconventional derivation sources.
 
 ## Available fetchers
 
