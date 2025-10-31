@@ -1,4 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-megatools dl "$url" --path "$out"
+if [[ $(basename ${item%/$(basename "$item")}) = "folder" ]]; then
+  mkdir "$out"
+fi
+
+megatools dl "$_url" --path "$out"

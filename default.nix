@@ -13,6 +13,7 @@ let
     mkFOD = callPackageSet ./mkFOD { };
     fetchFromBuzzheavier = callPackageSet ./fetchFromBuzzheavier { };
     fetchFromMega = callPackageSet ./fetchFromMega { };
+    fetchFromGofile = callPackageSet ./fetchFromGofile { };
   };
 in
 pkgSet

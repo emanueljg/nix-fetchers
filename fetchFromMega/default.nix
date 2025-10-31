@@ -15,20 +15,23 @@ lib.extendMkDerivation {
     }:
     {
       inherit baseUrl item;
-      name = "mega-${finalAttrs.item}";
+      name = "mega-${finalAttrs._id}";
 
-      _preSegments = let
-        inner =
-      in inner finalAttrs.item;
-
-
-      _handleItem = lib.hasPrefix  
-      _isFolder = lib.hasPrefix "${finalAttrs.baseUrl}/#F!" finalAttrs.url;
-      url =
+      # this is the format that megatool-dl understands. It's a bit weird,
+      # largely got it from trial-and-error.
+      _handleItem =
         builtins.replaceStrings
           [ "${finalAttrs.baseUrl}/folder/" "/file/" "/folder/" "#" ]
           [ "${finalAttrs.baseUrl}/#F!" "!" "!" "!" ]
-          "${finalAttrs.baseUrl}/${finalAttrs.item}";
+          finalAttrs.item;
+
+      _id = builtins.baseNameOf finalAttrs._handleItem;
+      _url =
+        if finalAttrs._id == finalAttrs._handleItem then
+          "${finalAttrs.baseUrl}/${finalAttrs._id}"
+        else
+          finalAttrs._handleItem;
+
       nativeBuildInputs = [
         megatools
       ]

@@ -1,6 +1,7 @@
 {
   lib,
   curl,
+  jq,
   mkFOD,
 }:
 lib.extendMkDerivation {
@@ -8,14 +9,23 @@ lib.extendMkDerivation {
   extendDrvArgs =
     finalAttrs:
     prevAttrs@{
-      baseUrl ? "https://buzzheavier.com",
+      baseUrl ? "https://gofile.io",
+      apiUrl ? "https://api.gofile.io",
       item,
+      select,
+
       nativeBuildInputs ? [ ],
       ...
     }:
     {
-      inherit baseUrl item;
-      name = "buzzheavier-${finalAttrs._id}";
+      inherit
+        baseUrl
+        apiUrl
+        item
+        select
+        ;
+      name = "gofile-${finalAttrs._id}";
+
       _id = builtins.baseNameOf finalAttrs.item;
       _url =
         if finalAttrs._id == finalAttrs.item then
@@ -23,8 +33,12 @@ lib.extendMkDerivation {
         else
           finalAttrs.item;
 
+      _selectList =
+        if (builtins.isList finalAttrs.select) then map (x: ''"${x}"'') finalAttrs.select else "";
+
       nativeBuildInputs = [
         curl
+        jq
       ]
       ++ nativeBuildInputs;
       builder = ./builder.sh;
