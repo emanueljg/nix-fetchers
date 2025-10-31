@@ -10,7 +10,7 @@ let
   inherit (pkgs) lib;
   callPackageSet = lib.callPackageWith (pkgs // pkgSet);
   pkgSet = {
-    mkFOD = callPackageSet ./mkFOD.nix { };
+    mkFOD = callPackageSet ./mkFOD { };
     fetchFromBuzzheavier = callPackageSet ./fetchFromBuzzheavier { };
     fetchFromMega = callPackageSet ./fetchFromMega { };
   };
