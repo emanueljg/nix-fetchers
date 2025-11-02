@@ -60,15 +60,45 @@ Fetches one or many files from a [gofile.io](https://gofile.io) link.
 As Gofile itself does, this script creates a guest account for each derivation whose token is used 
 in the download request. Using your own account for download is not supported at this time.
 
-This fetcher requires a selection of the actual files you want to download from the download link. 
-`select` may either be a _string_ denoting the selected file, in which case `$out` will be that file,
-or it may be a _list_ of strings denoting a list of selected files, in which case `$out` will be a directory
-containing those files. 
+By default, the fetcher downloads all items in the download link. Optionally, this fetcher can take the attribute
+`select` which allows you to instead download only a slice of one or more items. `select` is an attrset that
+may contain a name-value pair denoting how to filter the files and what the filter is.
 
-If you want to download a single file yet have it placed in a root directory, turn `select` into a single-entry list (`file.zip` -> `[ "file.zip" ]`). 
+` select.all = true;` is the default name-value pair. If `true`, all files are downloaded. `select.all = false` is
+  considered invalid input.
 
-An empty `select` list (`[ ]`) is treated as invalid input. Multiple identical `select` entries are ignored.
-A `select` entry that doesn't match anything is a no-op.
+- `select.one = "<filename>"` downloads a single file to `$out`. No outer directory will be created. If
+  this file does not exist, the build fails.
+  `select = { one = "myfile.zip"; }`
+
+- `select.many = [ <filename-1> ... ]` downloads all files in the list to a directory in `$out`.
+
+  By default, if at least one entry fails to map to a download, the build fails, but it
+  will keep going if you set `manyAllowSelectFail = true` and just emit a warning (default: `false`) 
+
+  Note that this attribute can be useful even if you're just downloading _one_ file, if you want the
+  file contained in an upper directory.
+  ```nix
+  select = {
+    many = [
+      "myfile1.zip"
+      "myfile2.zip"
+    ];
+    # optional, false by default
+    # allowSelectOnfail = true;
+  };
+  ```
+- `select.jq = "<jq-expr>"` downloads all files that pass through the given `jq` expression. `jq` will be
+  passed a list of JSON objects at `.data.children[]` containing all the downloaded files. Only filter the objects!
+  The fetcher will take care of the final mapping to `.link`s itself.
+
+  No checks are being made here to see that something actually match. In other words: a `jq` filter
+  which produces 0 objects is still considered valid and will end up producing an empty derivation.
+
+  By default, the file(s) filtered will be downloaded to a directory at `$out`. If you want a single file
+  downloaded to `$out`, like with `select.one`, you may set `jqFirst = true;` (default: `false`). 
+
+  `select.jqAttrs` is an attrset, empty by default, that will be passed along to `jq` as attributes.
 
 ```nix
 nix-fetchers.fetchFromGofile {
@@ -77,10 +107,8 @@ nix-fetchers.fetchFromGofile {
   # - "d/..."
   item = "https://gofile.io/d/...";
 
-  # select the files you want to download (see above)
-  # select = "foobar-linux.zip"
-  # select = [ "foobar-linux.zip" ]
-  # select = [ "foobar-linux.zip" "foobar-win.zip" ]
+  # OPTIONAL, see explanation of 'select' above
+  # select = ...
 
   # OPTIONAL, "https://gofile.io" by default
   # baseUrl = "...";

@@ -19,6 +19,45 @@ resp="$(
     --header "Authorization: Bearer $token"
 )"
 
+dl_one() {
+  pattern="$1"
+  
+
+}
+
+
+if [[ "${_select["strategy"]}" == "one" ]]; then
+  dl_url="$(
+    jq --raw-output '
+      .data.children[]
+        | select(.name == $selected)
+        | .link
+    ' --argjson 'selected' "\"${_select["one"]}\""
+  )"
+
+  if [ -z "$dl_url" ]; then
+    echo "No download link found!"
+    exit 1
+  fi
+
+  curl "$dl_url" \
+    --header "Authorization: Bearer $token" \
+    --output "$out"
+fi
+
+
+  
+# if [[ "${_select["strategy]}" == "all" ]]; then
+#   # TODO
+# fi
+  
+
+# else if [[ "${_select["strategy]}" == "many" ]]; then
+#   # TODO
+# fi
+
+  
+
 echo "$resp"
 
 # we got a list
