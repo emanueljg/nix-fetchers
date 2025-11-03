@@ -34,7 +34,13 @@ else
   )
 fi
 
-echo "$resp" | jq --raw-output --from-file "$_jq_pattern" --argjson drv "$(cat .attrs.json)" \
-  | xargs --replace={} "${curl[@]}" '{}' 
+echo "$resp" \
+  | jq "$_jq_pattern" \
+    --raw-output \
+    --from-file \
+    --argjson drv "$(cat .attrs.json)" \
+  | xargs \
+    --replace={} \
+    "${curl[@]}" '{}' 
 
 
