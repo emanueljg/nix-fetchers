@@ -8,88 +8,33 @@ token="$(curl "$apiUrl/accounts" \
 
 echo "$apiUrl"
 
+curl=(
+  curl
+  --header "Authorization: Bearer $token"
+)
+
 echo "List contents..."
 
 # I have no clue what 'wt' means, but if we don't pass along this hard-coded string,
 # we get the response {"status":"error-notPremium","data":{}}.
 # you can find it as a top-level constant in global.js
 wt="4fd6sg89d7s6"
-resp="$(
-  curl "https://api.gofile.io/contents/$_id?wt=$wt" \
-    --header "Authorization: Bearer $token"
-)"
-
-dl_one() {
-  pattern="$1"
-  
-
-}
+resp="$("${curl[@]}" "https://api.gofile.io/contents/$_id?wt=$wt")"
 
 
-if [[ "${_select["strategy"]}" == "one" ]]; then
-  dl_url="$(
-    jq --raw-output '
-      .data.children[]
-        | select(.name == $selected)
-        | .link
-    ' --argjson 'selected' "\"${_select["one"]}\""
-  )"
-
-  if [ -z "$dl_url" ]; then
-    echo "No download link found!"
-    exit 1
-  fi
-
-  curl "$dl_url" \
-    --header "Authorization: Bearer $token" \
+if [[ "${_select["strategy"]}" == "one" ]] || [[ "${_select["jqFirst"]}" == "true" ]]; then
+  curl+=(
     --output "$out"
-fi
-
-
-  
-# if [[ "${_select["strategy]}" == "all" ]]; then
-#   # TODO
-# fi
-  
-
-# else if [[ "${_select["strategy]}" == "many" ]]; then
-#   # TODO
-# fi
-
-  
-
-echo "$resp"
-
-# we got a list
-if [ -n "$_selectList" ]; then
-  mkdir "$out"
-  echo "$resp" \
-    | jq --raw-output '
-        .data.children[]
-          | select(
-              .name as $x
-                | $ARGS.positional
-                | any(. == $x)
-            )
-          | .link
-      ' --jsonargs -- "${_selectList[@]}" \
-    | xargs --replace={}  \
-        curl '{}' \
-          --header "Authorization: Bearer $token" \
-          --output-dir "$out" \
-          --remote-name
-# we got a single item
+  )
 else
-  dl_url="$(echo "$resp" \
-    | jq --raw-output '
-        .data.children[]
-          | select(
-              .name == $selected
-            )
-          | .link
-      ' --argjson 'selected' "\"$select\"" 
-  )"
-  curl "$dl_url" \
-    --header "Authorization: Bearer $token" \
-    --output "$out"
+  curl+=(
+    --output-dir "$out"
+    --create-dirs
+    --remote-name
+  )
 fi
+
+echo "$resp" | jq --raw-output --from-file "$_jq_pattern" --argjson drv "$(cat .attrs.json)" \
+  | xargs --replace={} "${curl[@]}" '{}' 
+
+

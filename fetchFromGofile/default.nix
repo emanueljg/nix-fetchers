@@ -97,6 +97,8 @@ lib.extendMkDerivation {
             the following unsupported attributes were provided: [ ${lib.concatStringsSep ", " (finalAttrs.rest)} ].
           '';
 
+      _jqPattern = if finalAttrs._select.strategy == "jq" then finalAttrs._select.jq else ./filter.jq;
+
       nativeBuildInputs = [
         curl
         jq
