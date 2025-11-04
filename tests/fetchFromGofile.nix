@@ -9,7 +9,7 @@
   one = fetchFromGofile {
     item = "https://gofile.io/d/s99zDV";
     select.one = "How To Make Wargames Terrain_2003.pdf";
-    # hash = "sha256-myIzsfDZhDoDFKt41Y2fcHOBhHg/svt6I7YSEp2Q19o=";
+    hash = "sha256-myIzsfDZhDoDFKt41Y2fcHOBhHg/svt6I7YSEp2Q19o=";
   };
   manyWithOne = fetchFromGofile {
     item = "https://gofile.io/d/vdl4tk";
@@ -25,6 +25,8 @@
       "Witch_Hunters.pdf"
     ];
   };
+
+  # build failure
   manyWithMissing = fetchFromGofile {
     item = "https://gofile.io/d/vdl4tk";
     select.many = [
@@ -32,6 +34,8 @@
       "does-not-exist"
     ];
   };
+
+  # eval failures
   manyWithEmpty = fetchFromGofile {
     item = "https://gofile.io/d/vdl4tk";
     select.many = [ ];
