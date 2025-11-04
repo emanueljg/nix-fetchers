@@ -40,7 +40,7 @@ lib.extendMkDerivation {
             if finalAttrs.select == { } then
               {
                 strategy = "all";
-                inherit (finalAttrs.select) all;
+                all = true;
               }
             # all
             else if finalAttrs.select ? "all" then
@@ -56,8 +56,8 @@ lib.extendMkDerivation {
             # one
             else if finalAttrs.select ? "one" then
               {
-                stragegy = "one";
-                value = finalAttrs.select.one;
+                strategy = "one";
+                inherit (finalAttrs.select) one;
               }
             # many
             else if finalAttrs.select ? "many" then
@@ -75,13 +75,6 @@ lib.extendMkDerivation {
                 manyAllowSelectFail = finalAttrs.select.manyAllowSelectFail or false;
               }
             # jq
-            else if finalAttrs.select ? "jq" then
-              {
-                strategy = "jq";
-                inherit (finalAttrs.select) jq;
-                jqFirst = finalAttrs.select.jqFirst or false;
-                jqAttrs = finalAttrs.select.jqAttrs or { };
-              }
             else
               builtins.throw ''
                 Select strategy not found!
@@ -94,10 +87,10 @@ lib.extendMkDerivation {
         else
           builtins.throw ''
             With strategy '${result.strategy}' chosen,
-            the following unsupported attributes were provided: [ ${lib.concatStringsSep ", " (finalAttrs.rest)} ].
+            the following unsupported attributes were provided: [ ${lib.concatStringsSep ", " rest} ].
           '';
 
-      _jqPattern = if finalAttrs._select.strategy == "jq" then finalAttrs._select.jq else ./filter.jq;
+      _jqPattern = ./filter.jq;
 
       nativeBuildInputs = [
         curl

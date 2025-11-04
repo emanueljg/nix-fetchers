@@ -57,49 +57,6 @@ nix-fetchers.fetchFromMega {
 
 Fetches one or many files from a [gofile.io](https://gofile.io) link. 
 
-As Gofile itself does, this script creates a guest account for each derivation whose token is used 
-in the download request. Using your own account for download is not supported at this time.
-
-By default, the fetcher downloads all items in the download link. Optionally, this fetcher can take the attribute
-`select` which allows you to instead download only a slice of one or more items. `select` is an attrset that
-may contain a name-value pair denoting how to filter the files and what the filter is.
-
-` select.all = true;` is the default name-value pair. If `true`, all files are downloaded. `select.all = false` is
-  considered invalid input.
-
-- `select.one = "<filename>"` downloads a single file to `$out`. No outer directory will be created. If
-  this file does not exist, the build fails.
-  `select = { one = "myfile.zip"; }`
-
-- `select.many = [ <filename-1> ... ]` downloads all files in the list to a directory in `$out`.
-
-  By default, if at least one entry fails to map to a download, the build fails, but it
-  will keep going if you set `manyAllowSelectFail = true` and just emit a warning (default: `false`) 
-
-  Note that this attribute can be useful even if you're just downloading _one_ file, if you want the
-  file contained in an upper directory.
-  ```nix
-  select = {
-    many = [
-      "myfile1.zip"
-      "myfile2.zip"
-    ];
-    # optional, false by default
-    # allowSelectOnfail = true;
-  };
-  ```
-- `select.jq = "<jq-expr>"` downloads all files that pass through the given `jq` expression. `jq` will be
-  passed a list of JSON objects at `.data.children[]` containing all the downloaded files. Only filter the objects!
-  The fetcher will take care of the final mapping to `.link`s itself.
-
-  No checks are being made here to see that something actually match. In other words: a `jq` filter
-  which produces 0 objects is still considered valid and will end up producing an empty derivation.
-
-  By default, the file(s) filtered will be downloaded to a directory at `$out`. If you want a single file
-  downloaded to `$out`, like with `select.one`, you may set `jqFirst = true;` (default: `false`). 
-
-  `select.jqAttrs` is an attrset, empty by default, that will be passed along to `jq` as attributes.
-
 ```nix
 nix-fetchers.fetchFromGofile {
   # may or may not contain baseUrl, i.e. both of these work: 
@@ -107,13 +64,46 @@ nix-fetchers.fetchFromGofile {
   # - "d/..."
   item = "https://gofile.io/d/...";
 
-  # OPTIONAL, see explanation of 'select' above
+  # OPTIONAL, see below
   # select = ...
 
   # OPTIONAL, "https://gofile.io" by default
   # baseUrl = "...";
 }
 ```
+
+As Gofile itself does in their frontend, this script creates a guest account ad-hoc in each build.
+The token for this guest account is then used in the download request.
+Using your own account for download is not supported at this time.
+
+Downloads will be urldecoded, i.e. the remote name `How%20To%20Make%20Wargames%20Terrain_2003.pdf` will save
+to the file `How To Make Wargames Terrain_2003.pdf`. 
+
+By default, the fetcher downloads all items in the download link. Optionally, this fetcher can take the attribute
+`select` which allows you to instead download only a slice of one or more items. `select` is an attrset that
+may contain **exactly one** name-value pair denoting how to filter the files and what the filter is.
+
+- `select.all = true;` is the default name-value pair. If `true`, all files are downloaded. `select.all = false` is
+  considered invalid input.
+
+- `select.one = "<filename>"` downloads a single file to `$out`. No outer directory will be created. If
+  this file does not exist, the build fails.
+  ```nix
+  select.one = "myfile.zip";
+  ```
+
+- `select.many = [ <filename-1> <filename-2> ... ]` downloads all files in the list to the directory `$out`.
+
+  If at least one file in this list does not eixst, the build fails.
+
+  Note that this attribute can be useful even if you're just downloading _one_ file, if you want the
+  file contained in a directory. This pattern is especially useful in `pkgs.symlinkJoin` constructs.
+  ```nix
+  select.many = [
+    "myfile1.zip"
+    "myfile2.zip"
+  ];
+  ```
 
 ### `nix-fetchers.fetchFromBuzzheavier`
 

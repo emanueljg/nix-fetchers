@@ -22,6 +22,10 @@ lib.fix (self: {
     inherit (self) mkFOD;
   };
 
+  tests.fetchFromGofile = pkgs.callPackage ./tests/fetchFromGofile.nix {
+    inherit (self) fetchFromGofile;
+  };
+
   # tests = {
   #   fetchFromMega = {
   #     folder = pkgs.callPackage ./tests/fetchFromMega/folder.nix {
