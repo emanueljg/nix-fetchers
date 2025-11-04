@@ -32,6 +32,10 @@
       "does-not-exist"
     ];
   };
+  manyWithEmpty = fetchFromGofile {
+    item = "https://gofile.io/d/vdl4tk";
+    select.many = [ ];
+  };
   manyWithDupes = fetchFromGofile {
     item = "https://gofile.io/d/vdl4tk";
     select.many = [
