@@ -94,6 +94,10 @@ may contain **exactly one** name-value pair denoting how to filter the files and
 
 - `select.many = [ <filename-1> <filename-2> ... ]` downloads all files in the list to the directory `$out`.
 
+  The following types of lists are considered invalid input and will fail at eval time:
+    - `[ ]`, an empty list
+    - `[ "file.zip" "file.zip" ]`, lists with duplicates
+
   If at least one file in this list does not eixst, the build fails.
 
   Note that this attribute can be useful even if you're just downloading _one_ file, if you want the
