@@ -22,6 +22,9 @@ lib.fix (self: {
     inherit (self) mkFOD;
   };
 
+  # just a helper
+  mkUnarDerivation = pkgs.callPackage ./mkUnarDerivation.nix { };
+
   tests.fetchFromGofile = pkgs.callPackage ./tests/fetchFromGofile.nix {
     inherit (self) fetchFromGofile;
   };
