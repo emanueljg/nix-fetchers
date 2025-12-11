@@ -11,6 +11,7 @@ lib.extendMkDerivation {
       src,
       enableParallelBuilding ? true,
       strictDeps ? true,
+      ...
     }:
     {
       inherit src enableParallelBuilding strictDeps;
