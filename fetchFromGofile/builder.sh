@@ -11,9 +11,11 @@ echo "List contents..."
 # we get the response {"status":"error-notPremium","data":{}}.
 # you can find it as a top-level constant in global.js
 wt="4fd6sg89d7s6"
-resp="$(curl "https://api.gofile.io/contents/$_id?wt=$wt" \
-  --header "Authorization: Bearer $token"
+resp="$(curl "https://api.gofile.io/contents/$_id" \
+  --header "Authorization: Bearer $token" \
+  --header "X-Website-Token: $wt"
 )"
+echo "$resp"
 
 echo "Download file(s)..."
 echo "$resp" \
